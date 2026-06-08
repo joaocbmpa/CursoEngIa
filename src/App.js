@@ -27,6 +27,7 @@ import MeusPedidos from './pages/MeusPedidos';
 import Checkout from './pages/Checkout';
 import MeusEbooks from './pages/MeusEbooks';
 import MinhasCompras from './pages/MinhasCompras';
+import RecomendadorIA from './pages/RecomendadorIA';
 
 // 🔐 Admin
 import AdminDashboard from './admin/AdminDashboard';
@@ -90,6 +91,7 @@ function AppShell() {
         <Route path="/obrigado" element={<Obrigado />} />
         <Route path="/meus-ebooks" element={<MeusEbooks />} />
         <Route path="/minhas-compras" element={<MinhasCompras />} />
+        <Route path="/recomendador-ia" element={<RecomendadorIA />} />
 
         {/* 🔐 Rota protegida Admin */}
         <Route

@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+# CursoEngIa — Projeto Acadêmico de IA Aplicada
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este repositório foi preparado para o exercício acadêmico do **Módulo 01 da formação Engenharia de Software com IA Aplicada**.
 
-## Available Scripts
+> **Importante:** este projeto usa dados fictícios e mockados. Ele não representa uma loja real, não realiza pagamentos reais e não deve receber chaves, tokens, credenciais, URLs produtivas ou dados privados.
 
-In the project directory, you can run:
+## Objetivo do exercício
+
+Demonstrar, em uma aplicação React, como preparar uma versão segura de um projeto para fins acadêmicos e como implementar um recomendador simples de produtos executado no navegador.
+
+A nova página principal do exercício está disponível em:
+
+```txt
+/recomendador-ia
+```
+
+## O que foi sanitizado
+
+- Nome e textos institucionais foram substituídos por uma marca fictícia: **Loja Acadêmica IA**.
+- Configuração do Firebase foi convertida para valores demonstrativos e não produtivos.
+- URLs de Cloud Functions foram trocadas por endpoints mockados em `example.invalid`.
+- Contatos, redes sociais, telefone, e-mails e textos comerciais reais foram substituídos por dados fictícios.
+- Referências a pagamento real foram removidas ou descritas como fluxo simulado.
+
+## Recomendador com TensorFlow.js
+
+A página `/recomendador-ia` implementa um exemplo simples com `@tensorflow/tfjs`:
+
+1. Usa uma lista local de produtos mockados.
+2. Considera as features:
+   - idade;
+   - preço;
+   - categoria;
+   - cor.
+3. Normaliza idade e preço com min-max scaling.
+4. Aplica one-hot encoding para categoria e cor.
+5. Treina um modelo pequeno no navegador.
+6. Exibe um ranking de produtos recomendados para um usuário teste.
+
+## Dados fictícios
+
+Os produtos do exercício ficam em `src/data/produtosMock.js`. Eles foram criados apenas para simulação didática e não correspondem a estoque, preços, vendas ou clientes reais.
+
+## Como executar
+
+Instale as dependências e rode o projeto em ambiente local:
+
+```bash
+npm install
+npm start
+```
+
+Depois acesse:
+
+```txt
+http://localhost:3000/recomendador-ia
+```
+
+## Scripts disponíveis
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Inicia a aplicação em modo de desenvolvimento.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Executa os testes com Create React App.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Gera o build de produção local. Para este exercício, revise sempre se não há dados sensíveis antes de publicar qualquer artefato.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Boas práticas de segurança para o exercício
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Não versionar `.env`, `.env.local`, `.env.production` ou credenciais.
+- Não adicionar chaves reais de Firebase, gateways de pagamento ou APIs externas.
+- Não usar dados reais de clientes, telefones, e-mails, pedidos ou endereços.
+- Manter integrações produtivas desativadas ou substituídas por mocks.
