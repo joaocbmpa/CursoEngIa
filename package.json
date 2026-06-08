@@ -1,5 +1,5 @@
 {
-  "name": "xadrezjl",
+  "name": "curso-eng-ia-academico",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -11,7 +11,6 @@
     "bootstrap": "^5.3.5",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
-    "mercadopago": "^2.4.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.0",
@@ -22,7 +21,8 @@
     "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
     "uuid": "^11.1.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@tensorflow/tfjs": "file:vendor/tfjs-academico"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -10,7 +10,7 @@ const getDate = (p) => {
   return t ? t.toLocaleString('pt-BR') : '—';
 };
 
-// normaliza status (Mercado Pago → pt-BR) e escolhe badge
+// normaliza status (gateway simulado → pt-BR) e escolhe badge
 const normStatus = (s = '') => {
   const m = String(s).toLowerCase();
   if (m === 'approved' || m === 'aprovado') return 'Aprovado';

@@ -29,7 +29,7 @@ export default function Beneficios() {
     },
     {
       titulo: 'Checkout Seguro',
-      descricao: '100% seguro com Mercado Pago. Pague com cartão, Pix ou boleto.',
+      descricao: 'Fluxo demonstrativo sem transações reais ou dados sensíveis.',
       icone: '🔒'
     }
   ];
