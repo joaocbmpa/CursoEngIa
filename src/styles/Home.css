@@ -1,0 +1,97 @@
+/* Hero Section */
+.hero {
+  background-image: url('../assets/banerhero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 6rem 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.hero p.lead {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero button {
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.4rem;
+}
+
+@media (min-width: 768px) {
+  .hero h1 {
+    font-size: 3rem;
+  }
+  .hero p.lead {
+    font-size: 1.4rem;
+  }
+}
+
+/* Produtos em Destaque */
+.produtos-destaque-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.produtos-destaque-section h2 {
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+}
+
+/* Benefícios */
+.beneficios-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.beneficios-section h2 {
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+}
+
+.beneficio-card {
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 1px solid #eee;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.beneficio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ✨ Animações Suaves */
+.animated-section {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease both;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

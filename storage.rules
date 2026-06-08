@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Permite leitura pública de imagens e recursos públicos
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Protege o diretório atual /ebooks mesmo fora de /protegido/
+    match /ebooks/{arquivo} {
+      // Somente usuários autenticados podem ler (não é mais público)
+      allow read: if request.auth != null;
+
+      // Apenas administradores autenticados podem escrever
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Bloqueia qualquer outro acesso genérico
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

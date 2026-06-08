@@ -1,0 +1,43 @@
+/* src/styles/Hero.css */
+
+.hero-slide {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #2c2c2c 0%, #444 50%, #2c2c2c 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-imagem-centro {
+  max-height: 70vh;
+  width: auto;
+  z-index: 1;
+  object-fit: contain;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+}
+
+.hero-overlay {
+  position: absolute;
+  max-width: 600px;
+  width: 90%;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  z-index: 2;
+}
+
+.hero-overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.hero-overlay p {
+  margin-bottom: 1.5rem;
+  color: #ddd;
+  font-size: 1rem;
+}
