@@ -1,77 +1,100 @@
-# CursoEngIa — Projeto Acadêmico de IA Aplicada
+# IA Chess Store — Recomendação com TensorFlow.js
 
-Este repositório foi preparado para o exercício acadêmico do **Módulo 01 da formação Engenharia de Software com IA Aplicada**.
+A **IA Chess Store** é uma loja fictícia acadêmica criada exclusivamente para o exercício do **Módulo 01 da formação Engenharia de Software com IA Aplicada**.
 
-> **Importante:** este projeto usa dados fictícios e mockados. Ele não representa uma loja real, não realiza pagamentos reais e não deve receber chaves, tokens, credenciais, URLs produtivas ou dados privados.
+> Segurança: este projeto não usa dados reais, loja real, Firebase real, gateway de pagamento real, URLs produtivas, `.env`, tokens, chaves ou credenciais. Todos os produtos, usuários e históricos de compra são fictícios.
 
 ## Objetivo do exercício
 
-Demonstrar, em uma aplicação React, como preparar uma versão segura de um projeto para fins acadêmicos e como implementar um recomendador simples de produtos executado no navegador.
+Demonstrar uma aplicação React que treina, no navegador, uma rede neural simples de recomendação de produtos usando `@tensorflow/tfjs`.
 
-A nova página principal do exercício está disponível em:
+A experiência principal contém apenas:
 
-```txt
-/recomendador-ia
-```
+- **Início** — vitrine fictícia com top 3 produtos recomendados pela IA.
+- **Recomendador IA** — página didática com features, treinamento, métricas e ranking completo.
+- **Sobre o Exercício** — explicação acadêmica do módulo, dos dados mockados e da diferença entre regra manual e aprendizado por comportamento.
 
-## O que foi sanitizado
+## Tecnologias usadas
 
-- Nome e textos institucionais foram substituídos por uma marca fictícia: **Loja Acadêmica IA**.
-- Configuração do Firebase foi convertida para valores demonstrativos e não produtivos.
-- URLs de Cloud Functions foram trocadas por endpoints mockados em `example.invalid`.
-- Contatos, redes sociais, telefone, e-mails e textos comerciais reais foram substituídos por dados fictícios.
-- Referências a pagamento real foram removidas ou descritas como fluxo simulado.
+- React e Create React App.
+- React Router.
+- React Bootstrap.
+- TensorFlow.js (`@tensorflow/tfjs`).
+- Dados mockados em arquivos locais.
 
-## Recomendador com TensorFlow.js
+## Como a rede neural recomenda
 
-A página `/recomendador-ia` implementa um exemplo simples com `@tensorflow/tfjs`:
+O ranking não usa uma fórmula manual de afinidade. Ele é gerado por comportamento mockado de compra:
 
-1. Usa listas locais de produtos e usuários mockados.
-2. Cada usuário fictício possui idade e histórico de compras que referencia produtos existentes.
-3. O modelo aprende por pares usuário-produto: label `1` quando o usuário comprou o produto e label `0` quando não comprou.
-4. O vetor de produto inclui preço normalizado, média de idade dos compradores normalizada, categoria com one-hot encoding ponderado e cor com one-hot encoding ponderado.
-5. O vetor de usuário é a média dos vetores dos produtos comprados; para o usuário teste sem compras, usa idade normalizada e zeros nos demais campos.
-6. Treina no navegador uma rede densa com saída sigmoid, `binaryCrossentropy`, `adam(0.01)`, 100 épocas e batch size 32.
-7. Exibe loss, accuracy final e ranking de produtos recomendados para um usuário teste fictício sem compras.
+1. `src/data/produtosMock.js` define produtos fictícios de xadrez com `id`, `nome`, `descricao`, `categoria`, `cor`, `preco`, `idadeIndicada` e `destaque` opcional.
+2. `src/data/usuariosMock.js` define usuários fictícios com `id`, `nome`, `idade` e histórico `purchases`/`compras` referenciando produtos existentes.
+3. `src/services/recomendadorIAService.js` cria o contexto com:
+   - `minAge` e `maxAge`;
+   - `minPrice` e `maxPrice`;
+   - categorias e cores;
+   - índices de categoria/cor;
+   - média de idade dos compradores por produto.
+4. Produtos são codificados com preço normalizado ponderado, idade média normalizada e one-hot encoding ponderado para categoria e cor.
+5. Usuários são codificados pela média dos vetores dos produtos comprados; usuários sem compras usam idade normalizada e zeros nos demais campos.
+6. O treino combina pares `[userVector + productVector]`.
+7. O label é `1` quando o usuário comprou o produto e `0` quando não comprou.
 
-O ranking não é gerado por uma fórmula manual de afinidade. A pontuação vem da predição do modelo treinado com o histórico mockado de compras.
+Arquitetura usada:
 
-## Dados fictícios
+- Dense 128 `relu`;
+- Dense 64 `relu`;
+- Dense 32 `relu`;
+- Dense 1 `sigmoid`;
+- `adam(0.01)`;
+- `binaryCrossentropy`;
+- métrica `accuracy`;
+- 100 épocas;
+- batch size 32.
 
-Os produtos do exercício ficam em `src/data/produtosMock.js` e os usuários em `src/data/usuariosMock.js`. Esses dados foram criados apenas para simulação didática e não correspondem a estoque, preços, vendas, clientes ou compras reais.
-
-## Como executar
-
-Instale as dependências e rode o projeto em ambiente local:
+## Como rodar
 
 ```bash
 npm install
 npm start
 ```
 
-Depois acesse:
+Acesse:
 
 ```txt
+http://localhost:3000
 http://localhost:3000/recomendador-ia
 ```
 
-## Scripts disponíveis
+## Testes e build
 
-### `npm start`
+```bash
+npm test -- --watchAll=false
+npm run build
+```
 
-Inicia a aplicação em modo de desenvolvimento.
+## Estrutura principal
 
-### `npm test`
+```txt
+src/data/produtosMock.js          # produtos fictícios de xadrez
+src/data/usuariosMock.js          # usuários fictícios e compras mockadas
+src/services/recomendadorIAService.js # treinamento e ranking com TensorFlow.js
+src/pages/Home.js                 # vitrine fictícia com top 3 recomendado
+src/pages/RecomendadorIA.js       # explicação e ranking completo
+src/pages/Sobre.js                # contexto acadêmico do exercício
+```
 
-Executa os testes com Create React App.
+## Prints sugeridos
 
-### `npm run build`
+Para documentação do exercício, capture:
 
-Gera o build de produção local. Para este exercício, revise sempre se não há dados sensíveis antes de publicar qualquer artefato.
+1. Home com o hero “Loja fictícia com recomendação por Inteligência Artificial”.
+2. Top 3 produtos recomendados na Home.
+3. Página `/recomendador-ia` exibindo loss, accuracy e ranking.
+4. Página “Sobre o Exercício” com o aviso de dados fictícios.
 
-## Boas práticas de segurança para o exercício
+## Aviso de segurança
 
-- Não versionar `.env`, `.env.local`, `.env.production` ou credenciais.
+- Não adicionar `.env`, `.env.local`, `.env.production` ou credenciais.
 - Não adicionar chaves reais de Firebase, gateways de pagamento ou APIs externas.
-- Não usar dados reais de clientes, telefones, e-mails, pedidos ou endereços.
-- Manter integrações produtivas desativadas ou substituídas por mocks.
+- Não usar dados reais de clientes, lojas, telefones, e-mails, pedidos ou endereços.
+- Manter integrações produtivas desativadas ou substituídas por dados fictícios.

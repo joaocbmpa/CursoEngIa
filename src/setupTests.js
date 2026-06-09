@@ -26,6 +26,7 @@ jest.mock('axios', () => ({
 }));
 
 jest.mock('@tensorflow/tfjs', () => ({
+  __esModule: true,
   ready: jest.fn(() => Promise.resolve()),
   tensor2d: jest.fn(() => ({ shape: [1, 1], dispose: jest.fn() })),
   sequential: jest.fn(() => ({

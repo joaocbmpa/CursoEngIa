@@ -6,7 +6,7 @@ export default function PoliticaPrivacidade() {
     <Container className="my-5">
       <h1 className="mb-4 text-center">Política de Privacidade</h1>
       <p>
-        Esta Política de Privacidade descreve como as informações pessoais dos usuários são coletadas, usadas e protegidas pelo site Loja Acadêmica IA.
+        Esta Política de Privacidade descreve como as informações pessoais dos usuários são coletadas, usadas e protegidas pelo site IA Chess Store.
       </p>
 
       <h4>1. Coleta de Informações</h4>

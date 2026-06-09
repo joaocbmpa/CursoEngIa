@@ -1,38 +1,49 @@
-export const usuariosMock = [
+const usuariosBase = [
   {
-    id: 'user-aluna-ana',
-    nome: 'Ana Estudante',
+    id: 'user-ana-escolar',
+    nome: 'Ana Escolar',
     idade: 9,
-    compras: ['mock-livro-iniciantes', 'mock-tabuleiro-vinil', 'mock-pecas-classicas'],
+    purchases: ['tabuleiro-escolar-ia', 'kit-pecas-classicas', 'tabuleiro-magnetico-portatil'],
   },
   {
-    id: 'user-clube-bruno',
-    nome: 'Bruno Clube Escolar',
+    id: 'user-bruno-iniciante',
+    nome: 'Bruno Iniciante',
     idade: 12,
-    compras: ['mock-ebook-taticas', 'mock-pecas-classicas', 'mock-bolsa-transporte'],
+    purchases: ['ebook-estrategia-iniciantes', 'kit-pecas-classicas', 'planner-treino-enxadrista'],
   },
   {
-    id: 'user-prof-carla',
+    id: 'user-carla-professora',
     nome: 'Carla Professora',
     idade: 34,
-    compras: ['mock-tabuleiro-madeira', 'mock-pecas-magneticas', 'mock-relogio-digital'],
+    purchases: ['tabuleiro-escolar-ia', 'curso-taticas-essenciais', 'relogio-digital-xadrez'],
   },
   {
-    id: 'user-treinador-diego',
-    nome: 'Diego Treinador',
+    id: 'user-diego-clube',
+    nome: 'Diego Clube',
     idade: 28,
-    compras: ['mock-relogio-digital', 'mock-bolsa-transporte', 'mock-tabuleiro-madeira'],
+    purchases: ['relogio-digital-xadrez', 'mentoria-aberturas-ia', 'curso-taticas-essenciais'],
   },
   {
-    id: 'user-iniciante-elisa',
-    nome: 'Elisa Iniciante',
+    id: 'user-elisa-tatica',
+    nome: 'Elisa Tática',
     idade: 15,
-    compras: ['mock-ebook-taticas', 'mock-pecas-magneticas', 'mock-tabuleiro-vinil'],
+    purchases: ['ebook-estrategia-iniciantes', 'curso-taticas-essenciais', 'tabuleiro-magnetico-portatil'],
   },
   {
-    id: 'user-familia-felipe',
+    id: 'user-felipe-familia',
     nome: 'Felipe Família',
     idade: 41,
-    compras: ['mock-livro-iniciantes', 'mock-tabuleiro-madeira', 'mock-pecas-classicas'],
+    purchases: ['tabuleiro-escolar-ia', 'kit-pecas-classicas', 'planner-treino-enxadrista'],
+  },
+  {
+    id: 'user-giovana-competicao',
+    nome: 'Giovana Competição',
+    idade: 17,
+    purchases: ['relogio-digital-xadrez', 'mentoria-aberturas-ia', 'planner-treino-enxadrista'],
   },
 ];
+
+export const usuariosMock = usuariosBase.map((usuario) => ({
+  ...usuario,
+  compras: usuario.purchases,
+}));
