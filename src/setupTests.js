@@ -31,7 +31,7 @@ jest.mock('@tensorflow/tfjs', () => ({
   sequential: jest.fn(() => ({
     add: jest.fn(),
     compile: jest.fn(),
-    fit: jest.fn(() => Promise.resolve({ history: { loss: [0.01] } })),
+    fit: jest.fn(() => Promise.resolve({ history: { loss: [0.01], accuracy: [0.95] } })),
     predict: jest.fn(() => ({ data: jest.fn(() => Promise.resolve([0.9])), dispose: jest.fn() })),
     dispose: jest.fn(),
   })),

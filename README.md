@@ -26,20 +26,19 @@ A nova página principal do exercício está disponível em:
 
 A página `/recomendador-ia` implementa um exemplo simples com `@tensorflow/tfjs`:
 
-1. Usa uma lista local de produtos mockados.
-2. Considera as features:
-   - idade;
-   - preço;
-   - categoria;
-   - cor.
-3. Normaliza idade e preço com min-max scaling.
-4. Aplica one-hot encoding para categoria e cor.
-5. Treina um modelo pequeno no navegador.
-6. Exibe um ranking de produtos recomendados para um usuário teste.
+1. Usa listas locais de produtos e usuários mockados.
+2. Cada usuário fictício possui idade e histórico de compras que referencia produtos existentes.
+3. O modelo aprende por pares usuário-produto: label `1` quando o usuário comprou o produto e label `0` quando não comprou.
+4. O vetor de produto inclui preço normalizado, média de idade dos compradores normalizada, categoria com one-hot encoding ponderado e cor com one-hot encoding ponderado.
+5. O vetor de usuário é a média dos vetores dos produtos comprados; para o usuário teste sem compras, usa idade normalizada e zeros nos demais campos.
+6. Treina no navegador uma rede densa com saída sigmoid, `binaryCrossentropy`, `adam(0.01)`, 100 épocas e batch size 32.
+7. Exibe loss, accuracy final e ranking de produtos recomendados para um usuário teste fictício sem compras.
+
+O ranking não é gerado por uma fórmula manual de afinidade. A pontuação vem da predição do modelo treinado com o histórico mockado de compras.
 
 ## Dados fictícios
 
-Os produtos do exercício ficam em `src/data/produtosMock.js`. Eles foram criados apenas para simulação didática e não correspondem a estoque, preços, vendas ou clientes reais.
+Os produtos do exercício ficam em `src/data/produtosMock.js` e os usuários em `src/data/usuariosMock.js`. Esses dados foram criados apenas para simulação didática e não correspondem a estoque, preços, vendas, clientes ou compras reais.
 
 ## Como executar
 
