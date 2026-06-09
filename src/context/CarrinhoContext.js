@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 export const CarrinhoContext = createContext();
 
-const STORAGE_KEY = "carrinho_xadrezjl";
+const STORAGE_KEY = "carrinho_academico_ia";
 
 export const CarrinhoProvider = ({ children }) => {
   const [carrinho, setCarrinho] = useState([]);

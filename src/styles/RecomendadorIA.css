@@ -1,0 +1,38 @@
+.recomendador-ia {
+  color: #172033;
+}
+
+.recomendador-ia__hero {
+  background:
+    radial-gradient(circle at 12% 20%, rgba(56, 189, 248, 0.22), transparent 26%),
+    radial-gradient(circle at 90% 0%, rgba(167, 139, 250, 0.24), transparent 28%),
+    linear-gradient(135deg, #eef7ff, #f8f4ff);
+  border: 1px solid #dce8ff;
+  border-radius: 28px;
+  padding: 2.4rem;
+}
+
+.recomendador-ia__hero h1 {
+  color: #18233f;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.recomendador-ia__hero p {
+  color: #46526d;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  max-width: 860px;
+}
+
+.recomendador-ia__card {
+  border: 1px solid #e7ecf7 !important;
+  border-radius: 22px !important;
+}
+
+.recomendador-ia__score {
+  color: #0f766e;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
