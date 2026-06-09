@@ -26,7 +26,7 @@ import axios from "axios"; // 👈 NOVO
 // === CONFIGURE AQUI ======================================
 // Troque pela URL da sua Cloud Function HTTP (Admin SDK)
 const ADMIN_CREATE_USER_URL =
-  "https://us-central1-xadrezjl-828b4.cloudfunctions.net/adminCreateUser";
+  "https://example.invalid/mock/adminCreateUser";
 // =========================================================
 
 // -------- util --------

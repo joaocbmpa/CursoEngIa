@@ -4,15 +4,16 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
-// Configuração do Firebase
+// Configuração acadêmica e fictícia.
+// Não use este arquivo para produção e não adicione chaves reais ao repositório.
 const firebaseConfig = {
-  apiKey: "AIzaSyDuHSkhybt57v6v-v0nmGeXi1Rn3Q-08KY",
-  authDomain: "xadrezjl-828b4.firebaseapp.com",
-  projectId: "xadrezjl-828b4",
-  storageBucket: "xadrezjl-828b4",
-  messagingSenderId: "32481571842",
-  appId: "1:32481571842:web:5bac6a68a79c8aeb73e31b",
-  measurementId: "G-8CMR4FY78F"
+  apiKey: "demo-api-key",
+  authDomain: "projeto-academico-ia.example.invalid",
+  projectId: "projeto-academico-ia",
+  storageBucket: "projeto-academico-ia.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:demoacademico",
+  measurementId: "G-DEMOACADEMICO"
 };
 
 const app = initializeApp(firebaseConfig);

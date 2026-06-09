@@ -1,6 +1,6 @@
 [
   {
-    "origin": ["https://xadrezjl-828b4.web.app"],
+    "origin": ["https://projeto-academico-ia.example.invalid"],
     "method": ["GET", "POST", "PUT", "DELETE"],
     "maxAgeSeconds": 3600,
     "responseHeader": ["Content-Type", "Authorization"]

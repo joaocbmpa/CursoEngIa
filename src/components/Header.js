@@ -4,7 +4,7 @@ import {
   Navbar, Nav, Container, Badge, NavDropdown, Modal, Form, Button
 } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../assets/logo-xadrezjl.png';
+import logo from '../logo.svg';
 import { CarrinhoContext } from '../context/CarrinhoContext';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Header.css';
@@ -122,9 +122,9 @@ export default function Header({ onAbrirCarrinho }) {
               width="40"
               height="40"
               className="d-inline-block align-top me-2"
-              alt="Xadrez JL Logo"
+              alt="Logo acadêmico"
             />
-            Xadrez JL
+            Loja Acadêmica IA
           </Navbar.Brand>
 
           <Navbar.Toggle
@@ -139,6 +139,7 @@ export default function Header({ onAbrirCarrinho }) {
               <Nav.Link as={Link} to="/categoria/pecas" onClick={closeAllMenus}>Peças</Nav.Link>
               <Nav.Link as={Link} to="/categoria/kits" onClick={closeAllMenus}>Kits</Nav.Link>
               <Nav.Link as={Link} to="/categoria/acessorios" onClick={closeAllMenus}>Acessórios</Nav.Link>
+              <Nav.Link as={Link} to="/recomendador-ia" onClick={closeAllMenus}>Recomendador IA</Nav.Link>
 
               {/* Submenu Institucional (usa comportamento padrão do react-bootstrap) */}
               <NavDropdown title="Institucional" id="institucional-dropdown" onToggle={() => {}}>
