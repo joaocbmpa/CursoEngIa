@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 
 jest.mock('./services/recomendadorIAService', () => ({
+  getComprasUsuario: jest.fn((usuario) => usuario.compras || usuario.purchases || []),
+  criarUsuarioTeste: jest.fn((usuario) => ({ ...usuario, compras: usuario.purchases || usuario.compras || [] })),
   usuarioTesteRecomendacao: {
     id: 'user-teste-sem-compras',
     nome: 'Visitante acadêmico',

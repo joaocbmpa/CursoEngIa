@@ -10,8 +10,8 @@ Demonstrar uma aplicação React que treina, no navegador, uma rede neural simpl
 
 A experiência principal contém apenas:
 
-- **Início** — vitrine fictícia com top 3 produtos recomendados pela IA.
-- **Recomendador IA** — página didática com features, treinamento, métricas e ranking completo.
+- **Início** — vitrine fictícia com top 3 produtos recomendados pela IA e simulador rápido de usuário.
+- **Recomendador IA** — página didática com controles interativos, features, treinamento, métricas e ranking completo.
 - **Sobre o Exercício** — explicação acadêmica do módulo, dos dados mockados e da diferença entre regra manual e aprendizado por comportamento.
 
 ## Tecnologias usadas
@@ -21,6 +21,10 @@ A experiência principal contém apenas:
 - React Bootstrap.
 - TensorFlow.js (`@tensorflow/tfjs`).
 - Dados mockados em arquivos locais.
+
+## Interação em tempo real
+
+A Home e a página `/recomendador-ia` permitem trocar o usuário mockado, criar um visitante sem compras, editar idade, categoria preferida, cor preferida e preço preferido, além de marcar/desmarcar compras simuladas. Ao clicar em **Recalcular recomendações**, a aplicação treina/recalcula no navegador e exibe o ranking atualizado, incluindo um aviso quando a ordem muda.
 
 ## Como a rede neural recomenda
 
@@ -78,8 +82,8 @@ npm run build
 src/data/produtosMock.js          # produtos fictícios de xadrez
 src/data/usuariosMock.js          # usuários fictícios e compras mockadas
 src/services/recomendadorIAService.js # treinamento e ranking com TensorFlow.js
-src/pages/Home.js                 # vitrine fictícia com top 3 recomendado
-src/pages/RecomendadorIA.js       # explicação e ranking completo
+src/pages/Home.js                 # vitrine fictícia com top 3 e simulador rápido
+src/pages/RecomendadorIA.js       # controles interativos, explicação e ranking completo
 src/pages/Sobre.js                # contexto acadêmico do exercício
 ```
 
@@ -88,8 +92,8 @@ src/pages/Sobre.js                # contexto acadêmico do exercício
 Para documentação do exercício, capture:
 
 1. Home com o hero “Loja fictícia com recomendação por Inteligência Artificial”.
-2. Top 3 produtos recomendados na Home.
-3. Página `/recomendador-ia` exibindo loss, accuracy e ranking.
+2. Top 3 produtos recomendados na Home após alterar o simulador.
+3. Página `/recomendador-ia` exibindo controles, compras simuladas, loss, accuracy e ranking.
 4. Página “Sobre o Exercício” com o aviso de dados fictícios.
 
 ## Aviso de segurança

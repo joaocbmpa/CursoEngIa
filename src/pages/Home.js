@@ -1,37 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Badge, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, Badge, Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { gerarRankingRecomendacoes, usuarioTesteRecomendacao } from '../services/recomendadorIAService';
+import { produtosMock } from '../data/produtosMock';
+import { usuariosMock } from '../data/usuariosMock';
+import {
+  criarUsuarioTeste,
+  gerarRankingRecomendacoes,
+  getComprasUsuario,
+  usuarioTesteRecomendacao,
+} from '../services/recomendadorIAService';
 import '../styles/Home.css';
 
+function criarEstadoUsuario(usuario) {
+  return {
+    id: usuario.id,
+    nome: usuario.nome,
+    idade: usuario.idade,
+    categoriaPreferida: usuario.categoriaPreferida || 'tabuleiro',
+    corPreferida: usuario.corPreferida || 'azul',
+    precoPreferido: usuario.precoPreferido || 120,
+    purchases: getComprasUsuario(usuario),
+  };
+}
+
 export default function Home() {
+  const categorias = useMemo(() => [...new Set(produtosMock.map((produto) => produto.categoria))], []);
+  const cores = useMemo(() => [...new Set(produtosMock.map((produto) => produto.cor))], []);
+  const [usuarioSelecionadoId, setUsuarioSelecionadoId] = useState(usuarioTesteRecomendacao.id);
+  const [usuarioForm, setUsuarioForm] = useState(() => criarEstadoUsuario(usuarioTesteRecomendacao));
   const [recomendados, setRecomendados] = useState([]);
+  const [rankingAnterior, setRankingAnterior] = useState([]);
   const [status, setStatus] = useState('Treinando rede neural no navegador...');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [rankingMudou, setRankingMudou] = useState(false);
+
+  const recalcular = async () => {
+    setLoading(true);
+    setErro('');
+    setStatus('Treinando rede neural no navegador...');
+    try {
+      const usuarioAtivo = criarUsuarioTeste(usuarioForm);
+      const resultado = await gerarRankingRecomendacoes({ usuario: usuarioAtivo, limite: 3 });
+      const novoRanking = resultado?.ranking || [];
+      const mudou = recomendados.length > 0 && recomendados.map((item) => item.id).join('|') !== novoRanking.map((item) => item.id).join('|');
+      setRankingAnterior(recomendados);
+      setRecomendados(novoRanking);
+      setRankingMudou(mudou);
+      setStatus('Top 3 recalculado com histórico e preferências simuladas.');
+    } catch (error) {
+      setErro('Não foi possível treinar a rede neural neste navegador.');
+      setStatus('Falha ao gerar recomendações.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let ativo = true;
-
-    async function carregarTopRecomendacoes() {
-      try {
-        const resultado = await gerarRankingRecomendacoes({ usuario: usuarioTesteRecomendacao, limite: 3 });
-        if (!ativo) return;
-        setRecomendados(resultado?.ranking || []);
-        setStatus('Top 3 gerado com histórico mockado de compras.');
-      } catch (error) {
-        if (!ativo) return;
-        setErro('Não foi possível treinar a rede neural neste navegador.');
-        setStatus('Falha ao gerar recomendações.');
-        console.error(error);
-      }
-    }
-
-    carregarTopRecomendacoes();
-
-    return () => {
-      ativo = false;
-    };
+    recalcular();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selecionarUsuario = (id) => {
+    setUsuarioSelecionadoId(id);
+    if (id === usuarioTesteRecomendacao.id) {
+      setUsuarioForm(criarEstadoUsuario(usuarioTesteRecomendacao));
+      return;
+    }
+    const usuarioMock = usuariosMock.find((usuario) => usuario.id === id);
+    if (usuarioMock) setUsuarioForm(criarEstadoUsuario(usuarioMock));
+  };
+
+  const atualizarCampo = (campo, valor) => {
+    setUsuarioForm((atual) => ({ ...atual, [campo]: valor }));
+  };
 
   return (
     <main className="ia-store-home">
@@ -57,15 +100,72 @@ export default function Home() {
             <Col lg={5}>
               <Card className="ia-store-hero-card shadow-lg">
                 <Card.Body>
-                  <Card.Title>Como o ranking é criado?</Card.Title>
+                  <Card.Title>Simulador de usuário</Card.Title>
                   <p>
-                    A rede aprende padrões em compras fictícias, transforma usuários e produtos em vetores
-                    e prevê a chance de recomendação para um visitante sem histórico.
+                    Altere idade, categoria, cor ou preço para observar como a rede neural muda o ranking.
                   </p>
-                  <div className="d-flex align-items-center gap-2 text-info-emphasis">
-                    {recomendados.length === 0 && !erro && <Spinner animation="border" size="sm" />}
-                    <span>{status}</span>
-                  </div>
+                  <Form className="d-grid gap-3">
+                    <Form.Group>
+                      <Form.Label>Usuário</Form.Label>
+                      <Form.Select value={usuarioSelecionadoId} onChange={(event) => selecionarUsuario(event.target.value)}>
+                        <option value={usuarioTesteRecomendacao.id}>Criar usuário teste sem compras</option>
+                        {usuariosMock.map((usuario) => (
+                          <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                    <Row className="g-3">
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label>Idade</Form.Label>
+                          <Form.Control
+                            type="number"
+                            min="6"
+                            max="80"
+                            value={usuarioForm.idade}
+                            onChange={(event) => atualizarCampo('idade', Number(event.target.value))}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label>Preço preferido</Form.Label>
+                          <Form.Control
+                            type="number"
+                            min="0"
+                            step="10"
+                            value={usuarioForm.precoPreferido}
+                            onChange={(event) => atualizarCampo('precoPreferido', Number(event.target.value))}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="g-3">
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label>Categoria</Form.Label>
+                          <Form.Select value={usuarioForm.categoriaPreferida} onChange={(event) => atualizarCampo('categoriaPreferida', event.target.value)}>
+                            {categorias.map((categoria) => <option key={categoria} value={categoria}>{categoria}</option>)}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      <Col sm={6}>
+                        <Form.Group>
+                          <Form.Label>Cor</Form.Label>
+                          <Form.Select value={usuarioForm.corPreferida} onChange={(event) => atualizarCampo('corPreferida', event.target.value)}>
+                            {cores.map((cor) => <option key={cor} value={cor}>{cor}</option>)}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Button onClick={recalcular} disabled={loading} variant="primary">
+                      {loading ? 'Recalculando...' : 'Recalcular recomendações'}
+                    </Button>
+                    <div className="d-flex align-items-center gap-2 text-info-emphasis">
+                      {loading && <Spinner animation="border" size="sm" />}
+                      <span>{status}</span>
+                    </div>
+                  </Form>
                 </Card.Body>
               </Card>
             </Col>
@@ -80,6 +180,12 @@ export default function Home() {
           <p>Recomendações calculadas localmente com dados mockados e sem qualquer integração real.</p>
         </div>
 
+        {rankingMudou && <Alert variant="success">O ranking mudou após a simulação do usuário.</Alert>}
+        {rankingAnterior.length > 0 && (
+          <Alert variant="light">
+            <strong>Ranking anterior:</strong> {rankingAnterior.map((produto) => produto.nome).join(' → ')}
+          </Alert>
+        )}
         {erro && <Alert variant="danger">{erro}</Alert>}
 
         <Row className="g-4">
@@ -95,7 +201,7 @@ export default function Home() {
 
           {recomendados.map((produto, index) => (
             <Col md={4} key={produto.id}>
-              <Card className="h-100 ia-product-card shadow-sm">
+              <Card className={`h-100 ia-product-card shadow-sm ${rankingMudou ? 'ranking-updated' : ''}`}>
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <Badge bg={index === 0 ? 'success' : 'dark'}>#{index + 1}</Badge>

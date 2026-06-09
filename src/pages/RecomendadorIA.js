@@ -1,20 +1,41 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Badge, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Alert, Badge, Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { produtosMock } from '../data/produtosMock';
 import { usuariosMock } from '../data/usuariosMock';
 import {
   criarContexto,
+  criarUsuarioTeste,
   gerarRankingRecomendacoes,
+  getComprasUsuario,
   usuarioTesteRecomendacao,
 } from '../services/recomendadorIAService';
 import '../styles/RecomendadorIA.css';
 
+function criarEstadoUsuario(usuario) {
+  return {
+    id: usuario.id,
+    nome: usuario.nome,
+    idade: usuario.idade,
+    categoriaPreferida: usuario.categoriaPreferida || 'tabuleiro',
+    corPreferida: usuario.corPreferida || 'azul',
+    precoPreferido: usuario.precoPreferido || 120,
+    purchases: getComprasUsuario(usuario),
+  };
+}
+
 export default function RecomendadorIA() {
+  const categorias = useMemo(() => [...new Set(produtosMock.map((produto) => produto.categoria))], []);
+  const cores = useMemo(() => [...new Set(produtosMock.map((produto) => produto.cor))], []);
+  const [usuarioSelecionadoId, setUsuarioSelecionadoId] = useState(usuarioTesteRecomendacao.id);
+  const [usuarioForm, setUsuarioForm] = useState(() => criarEstadoUsuario(usuarioTesteRecomendacao));
   const [ranking, setRanking] = useState([]);
+  const [rankingAnterior, setRankingAnterior] = useState([]);
   const [status, setStatus] = useState('Treinando modelo no navegador...');
   const [erro, setErro] = useState('');
   const [loss, setLoss] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [rankingMudou, setRankingMudou] = useState(false);
   const [contextoTreino, setContextoTreino] = useState(() => criarContexto(produtosMock, usuariosMock));
 
   const featureInfo = useMemo(() => ({
@@ -28,33 +49,66 @@ export default function RecomendadorIA() {
     },
   }), [contextoTreino]);
 
-  useEffect(() => {
-    let ativo = true;
+  const comprasSelecionadas = usuarioForm.purchases || [];
+  const usuarioAtivo = criarUsuarioTeste(usuarioForm);
 
-    async function executarRecomendacao() {
-      try {
-        const resultado = await gerarRankingRecomendacoes({ usuario: usuarioTesteRecomendacao });
+  const recalcular = async () => {
+    setLoading(true);
+    setErro('');
+    setStatus('Treinando modelo no navegador...');
+    try {
+      const resultado = await gerarRankingRecomendacoes({
+        usuario: usuarioAtivo,
+        comprasSimuladas: comprasSelecionadas,
+      });
+      const novoRanking = resultado.ranking || [];
+      const mudou = ranking.length > 0 && ranking.map((item) => item.id).join('|') !== novoRanking.map((item) => item.id).join('|');
 
-        if (!ativo) return;
-        setRanking(resultado.ranking);
-        setLoss(resultado.loss);
-        setAccuracy(resultado.accuracy);
-        setContextoTreino(resultado.contexto);
-        setStatus('Modelo treinado no navegador com histórico mockado de compras.');
-      } catch (error) {
-        if (!ativo) return;
-        setErro('Não foi possível treinar o modelo localmente neste navegador.');
-        setStatus('Falha ao treinar modelo.');
-        console.error(error);
-      }
+      setRankingAnterior(ranking);
+      setRanking(novoRanking);
+      setLoss(resultado.loss);
+      setAccuracy(resultado.accuracy);
+      setContextoTreino(resultado.contexto);
+      setRankingMudou(mudou);
+      setStatus('Ranking recalculado com usuário e compras simuladas.');
+    } catch (error) {
+      setErro('Não foi possível treinar o modelo localmente neste navegador.');
+      setStatus('Falha ao treinar modelo.');
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    executarRecomendacao();
-
-    return () => {
-      ativo = false;
-    };
+  useEffect(() => {
+    recalcular();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selecionarUsuario = (id) => {
+    setUsuarioSelecionadoId(id);
+    if (id === usuarioTesteRecomendacao.id) {
+      setUsuarioForm(criarEstadoUsuario(usuarioTesteRecomendacao));
+      return;
+    }
+    const usuarioMock = usuariosMock.find((usuario) => usuario.id === id);
+    if (usuarioMock) setUsuarioForm(criarEstadoUsuario(usuarioMock));
+  };
+
+  const atualizarCampo = (campo, valor) => {
+    setUsuarioForm((atual) => ({ ...atual, [campo]: valor }));
+  };
+
+  const alternarCompra = (produtoId) => {
+    setUsuarioForm((atual) => {
+      const comprasAtuais = atual.purchases || [];
+      const existe = comprasAtuais.includes(produtoId);
+      const purchases = existe
+        ? comprasAtuais.filter((id) => id !== produtoId)
+        : [...comprasAtuais, produtoId];
+      return { ...atual, purchases, compras: purchases };
+    });
+  };
 
   return (
     <Container className="recomendador-ia py-5">
@@ -62,25 +116,106 @@ export default function RecomendadorIA() {
         <Badge bg="info" text="dark" className="mb-3">Módulo 01 • IA aplicada</Badge>
         <h1>Recomendador IA da IA Chess Store</h1>
         <p>
-          O ranking abaixo é gerado por uma rede neural treinada no navegador com dados fictícios
-          de usuários, compras e produtos de xadrez.
+          Selecione usuários, edite preferências e simule compras para observar o ranking da rede neural
+          mudar em tempo real controlado pelo botão Recalcular.
         </p>
       </div>
 
       <Alert variant="warning">
-        Projeto acadêmico: todos os produtos, usuários, compras e pontuações são fictícios. Não há
-        Firebase real, gateway de pagamento real, credenciais ou dados de produção.
+        Altere idade, categoria, cor ou compras para observar como a rede neural muda o ranking.
+        Todos os dados são fictícios e não há Firebase, pagamento ou credenciais reais.
       </Alert>
+
+      <Row className="g-4 mb-4">
+        <Col lg={4}>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Controles interativos</Card.Title>
+              <Form className="d-grid gap-3">
+                <Form.Group>
+                  <Form.Label>Usuário</Form.Label>
+                  <Form.Select value={usuarioSelecionadoId} onChange={(event) => selecionarUsuario(event.target.value)}>
+                    <option value={usuarioTesteRecomendacao.id}>Criar usuário teste sem compras</option>
+                    {usuariosMock.map((usuario) => (
+                      <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Idade</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="6"
+                    max="80"
+                    value={usuarioForm.idade}
+                    onChange={(event) => atualizarCampo('idade', Number(event.target.value))}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Preço preferido</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    step="10"
+                    value={usuarioForm.precoPreferido}
+                    onChange={(event) => atualizarCampo('precoPreferido', Number(event.target.value))}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Categoria preferida</Form.Label>
+                  <Form.Select value={usuarioForm.categoriaPreferida} onChange={(event) => atualizarCampo('categoriaPreferida', event.target.value)}>
+                    {categorias.map((categoria) => <option key={categoria} value={categoria}>{categoria}</option>)}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Cor preferida</Form.Label>
+                  <Form.Select value={usuarioForm.corPreferida} onChange={(event) => atualizarCampo('corPreferida', event.target.value)}>
+                    {cores.map((cor) => <option key={cor} value={cor}>{cor}</option>)}
+                  </Form.Select>
+                </Form.Group>
+                <Button onClick={recalcular} disabled={loading} variant="primary">
+                  {loading ? 'Recalculando...' : 'Recalcular ranking'}
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col lg={8}>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Compras usadas como histórico</Card.Title>
+              <p className="text-muted">
+                Marque ou desmarque produtos para simular o histórico de compras do usuário ativo.
+              </p>
+              <Row className="g-2">
+                {produtosMock.map((produto) => (
+                  <Col md={6} key={produto.id}>
+                    <Form.Check
+                      type="checkbox"
+                      checked={comprasSelecionadas.includes(produto.id)}
+                      onChange={() => alternarCompra(produto.id)}
+                      label={`${produto.nome} (${produto.categoria}, ${produto.cor})`}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       <Row className="g-4 mb-4">
         <Col md={4}>
           <Card className="h-100 shadow-sm">
             <Card.Body>
-              <Card.Title>Usuário teste</Card.Title>
+              <Card.Title>Usuário selecionado</Card.Title>
               <ul className="mb-0">
-                <li>Nome: {usuarioTesteRecomendacao.nome}</li>
-                <li>Idade: {usuarioTesteRecomendacao.idade} anos</li>
-                <li>Histórico de compras: nenhum</li>
+                <li>Nome: {usuarioForm.nome}</li>
+                <li>Idade: {usuarioForm.idade} anos</li>
+                <li>Categoria: {usuarioForm.categoriaPreferida}</li>
+                <li>Cor: {usuarioForm.corPreferida}</li>
+                <li>Compras: {comprasSelecionadas.length}</li>
               </ul>
             </Card.Body>
           </Card>
@@ -88,11 +223,10 @@ export default function RecomendadorIA() {
         <Col md={8}>
           <Card className="h-100 shadow-sm">
             <Card.Body>
-              <Card.Title>Como a IA aprende</Card.Title>
+              <Card.Title>Features consideradas</Card.Title>
               <p>
                 O treino combina vetores de usuário e produto. O label é <code>1</code> quando um
-                usuário mockado comprou o produto e <code>0</code> quando não comprou. O modelo usa
-                normalização min-max, one-hot encoding para categoria/cor e aprende padrões de comportamento.
+                usuário mockado comprou o produto e <code>0</code> quando não comprou.
               </p>
               <p className="mb-1"><strong>Categorias:</strong> {featureInfo.categorias.join(', ')}</p>
               <p className="mb-0"><strong>Cores:</strong> {featureInfo.cores.join(', ')}</p>
@@ -101,35 +235,15 @@ export default function RecomendadorIA() {
         </Col>
       </Row>
 
-      <Row className="g-4 mb-4">
-        <Col md={6}>
-          <Card className="h-100 shadow-sm">
-            <Card.Body>
-              <Card.Title>Features usadas</Card.Title>
-              <ul className="mb-0">
-                <li>Preço normalizado e ponderado.</li>
-                <li>Média de idade dos compradores por produto.</li>
-                <li>Categoria com one-hot encoding ponderado.</li>
-                <li>Cor com one-hot encoding ponderado.</li>
-              </ul>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={6}>
-          <Card className="h-100 shadow-sm">
-            <Card.Body>
-              <Card.Title>Configuração da rede</Card.Title>
-              <p className="mb-0">
-                Dense 128/64/32 com ReLU, saída sigmoid, <code>adam(0.01)</code>,
-                <code> binaryCrossentropy</code>, métrica <code>accuracy</code>, 100 épocas e batch size 32.
-              </p>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      {rankingMudou && <Alert variant="success">O ranking foi atualizado após a simulação.</Alert>}
+      {rankingAnterior.length > 0 && (
+        <Alert variant="light">
+          <strong>Ranking anterior:</strong> {rankingAnterior.slice(0, 5).map((produto) => produto.nome).join(' → ')}
+        </Alert>
+      )}
 
       <div className="d-flex align-items-center gap-2 mb-3 flex-wrap">
-        {ranking.length === 0 && !erro && <Spinner animation="border" size="sm" />}
+        {(ranking.length === 0 || loading) && !erro && <Spinner animation="border" size="sm" />}
         <span>{status}</span>
         {loss !== null && <Badge bg="secondary">loss: {Number(loss).toFixed(5)}</Badge>}
         {accuracy !== null && accuracy !== undefined && (
@@ -142,7 +256,7 @@ export default function RecomendadorIA() {
       <Row className="g-4">
         {ranking.map((produto, index) => (
           <Col md={6} lg={4} key={produto.id}>
-            <Card className="h-100 recomendador-ia__card shadow-sm">
+            <Card className={`h-100 recomendador-ia__card shadow-sm ${rankingMudou ? 'ranking-updated' : ''}`}>
               <Card.Body>
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <Badge bg={index === 0 ? 'success' : 'primary'}>#{index + 1}</Badge>

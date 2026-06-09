@@ -6,6 +6,9 @@ export const usuarioTesteRecomendacao = {
   id: 'user-teste-sem-compras',
   nome: 'Visitante acadêmico',
   idade: 13,
+  categoriaPreferida: 'tabuleiro',
+  corPreferida: 'azul',
+  precoPreferido: 120,
   purchases: [],
   compras: [],
 };
@@ -31,11 +34,33 @@ function criarIndice(valores) {
   return valores.reduce((indice, valor, posicao) => ({ ...indice, [valor]: posicao }), {});
 }
 
-function getComprasUsuario(usuario) {
+export function getComprasUsuario(usuario) {
   return usuario.compras || usuario.purchases || [];
 }
 
-export function criarContexto(produtos = produtosMock, usuarios = usuariosMock) {
+export function criarUsuarioTeste({
+  id = 'user-teste-sem-compras',
+  nome = 'Visitante acadêmico',
+  idade = 13,
+  categoriaPreferida = 'tabuleiro',
+  corPreferida = 'azul',
+  precoPreferido = 120,
+  compras = [],
+  purchases = compras,
+} = {}) {
+  return {
+    id,
+    nome,
+    idade: Number(idade) || 0,
+    categoriaPreferida,
+    corPreferida,
+    precoPreferido: Number(precoPreferido) || 0,
+    purchases,
+    compras: purchases,
+  };
+}
+
+export function montarContexto(produtos = produtosMock, usuarios = usuariosMock) {
   const precos = produtos.map((produto) => produto.preco);
   const idadesUsuarios = usuarios.map((usuario) => usuario.idade);
   const categorias = [...new Set(produtos.map((produto) => produto.categoria))];
@@ -53,8 +78,8 @@ export function criarContexto(produtos = produtosMock, usuarios = usuariosMock) 
   }), {});
 
   return {
-    minAge: Math.min(...idadesUsuarios),
-    maxAge: Math.max(...idadesUsuarios),
+    minAge: Math.min(...idadesUsuarios, usuarioTesteRecomendacao.idade),
+    maxAge: Math.max(...idadesUsuarios, usuarioTesteRecomendacao.idade),
     minPrice: Math.min(...precos),
     maxPrice: Math.max(...precos),
     categorias,
@@ -64,6 +89,8 @@ export function criarContexto(produtos = produtosMock, usuarios = usuariosMock) 
     mediaIdadeCompradoresPorProduto,
   };
 }
+
+export const criarContexto = montarContexto;
 
 function encodeOneHot(valor, indice, tamanho, peso) {
   const vetor = Array(tamanho).fill(0);
@@ -93,18 +120,33 @@ function calcularMediaVetores(vetores) {
   return vetores[0].map((_, indice) => calcularMedia(vetores.map((vetor) => vetor[indice])));
 }
 
+function encodePreferenciasUsuario(usuario, contexto) {
+  const tamanhoVetor = 2 + contexto.categorias.length + contexto.cores.length;
+  const vetor = Array(tamanhoVetor).fill(0);
+  vetor[0] = normalizar(usuario.precoPreferido || contexto.minPrice, contexto.minPrice, contexto.maxPrice) * PESOS_FEATURES.preco;
+  vetor[1] = normalizar(usuario.idade, contexto.minAge, contexto.maxAge) * PESOS_FEATURES.idadeMedia;
+
+  const categoriaOffset = 2;
+  const corOffset = 2 + contexto.categorias.length;
+  const categoriaPos = contexto.categoriaIndex[usuario.categoriaPreferida];
+  const corPos = contexto.corIndex[usuario.corPreferida];
+
+  if (categoriaPos !== undefined) vetor[categoriaOffset + categoriaPos] = PESOS_FEATURES.categoria;
+  if (corPos !== undefined) vetor[corOffset + corPos] = PESOS_FEATURES.cor;
+  return vetor;
+}
+
 export function encodeUser(usuario, contexto, produtosPorId) {
   const compras = getComprasUsuario(usuario);
+  const vetorPreferencias = encodePreferenciasUsuario(usuario, contexto);
 
   if (compras.length) {
     const produtosComprados = compras.map((produtoId) => produtosPorId[produtoId]).filter(Boolean);
-    return calcularMediaVetores(produtosComprados.map((produto) => encodeProduct(produto, contexto)));
+    const vetorCompras = calcularMediaVetores(produtosComprados.map((produto) => encodeProduct(produto, contexto)));
+    return vetorCompras.map((valor, indice) => (valor * 0.7) + ((vetorPreferencias[indice] || 0) * 0.3));
   }
 
-  const tamanhoVetor = 2 + contexto.categorias.length + contexto.cores.length;
-  const vetor = Array(tamanhoVetor).fill(0);
-  vetor[1] = normalizar(usuario.idade, contexto.minAge, contexto.maxAge) * PESOS_FEATURES.idadeMedia;
-  return vetor;
+  return vetorPreferencias;
 }
 
 export function criarParesTreino(produtos, usuarios, contexto, produtosPorId) {
@@ -121,9 +163,9 @@ export function criarParesTreino(produtos, usuarios, contexto, produtosPorId) {
   });
 }
 
-export async function treinarModeloRecomendador(produtos = produtosMock, usuarios = usuariosMock) {
+export async function treinarModelo(produtos = produtosMock, usuarios = usuariosMock) {
   await tf.ready();
-  const contexto = criarContexto(produtos, usuarios);
+  const contexto = montarContexto(produtos, usuarios);
   const produtosPorId = Object.fromEntries(produtos.map((produto) => [produto.id, produto]));
   const paresTreino = criarParesTreino(produtos, usuarios, contexto, produtosPorId);
   const xs = tf.tensor2d(paresTreino.map((par) => par.features));
@@ -157,34 +199,60 @@ export async function treinarModeloRecomendador(produtos = produtosMock, usuario
   return { model, contexto, produtosPorId, loss, accuracy };
 }
 
+export const treinarModeloRecomendador = treinarModelo;
+
+export async function recomendarProdutos({
+  usuarioAtivo = usuarioTesteRecomendacao,
+  comprasSimuladas,
+  produtos = produtosMock,
+  usuarios = usuariosMock,
+  modeloTreinado,
+  limite,
+} = {}) {
+  const usuario = criarUsuarioTeste({
+    ...usuarioAtivo,
+    purchases: comprasSimuladas || getComprasUsuario(usuarioAtivo),
+  });
+  const resultadoTreino = modeloTreinado || await treinarModelo(produtos, usuarios);
+  const userVector = encodeUser(usuario, resultadoTreino.contexto, resultadoTreino.produtosPorId);
+
+  const ranking = await Promise.all(
+    produtos.map(async (produto) => {
+      const productVector = encodeProduct(produto, resultadoTreino.contexto);
+      const entrada = tf.tensor2d([[...userVector, ...productVector]]);
+      const predicao = resultadoTreino.model.predict(entrada);
+      const [score] = await predicao.data();
+      entrada.dispose();
+      predicao.dispose();
+      return { ...produto, score };
+    })
+  );
+
+  const rankingOrdenado = ranking.sort((a, b) => b.score - a.score);
+  return {
+    ...resultadoTreino,
+    ranking: limite ? rankingOrdenado.slice(0, limite) : rankingOrdenado,
+    usuario,
+  };
+}
+
 export async function gerarRankingRecomendacoes({
   usuario = usuarioTesteRecomendacao,
+  comprasSimuladas,
   produtos = produtosMock,
   usuarios = usuariosMock,
   limite,
 } = {}) {
-  const resultadoTreino = await treinarModeloRecomendador(produtos, usuarios);
-  const userVector = encodeUser(usuario, resultadoTreino.contexto, resultadoTreino.produtosPorId);
-
+  const resultadoTreino = await treinarModelo(produtos, usuarios);
   try {
-    const ranking = await Promise.all(
-      produtos.map(async (produto) => {
-        const productVector = encodeProduct(produto, resultadoTreino.contexto);
-        const entrada = tf.tensor2d([[...userVector, ...productVector]]);
-        const predicao = resultadoTreino.model.predict(entrada);
-        const [score] = await predicao.data();
-        entrada.dispose();
-        predicao.dispose();
-        return { ...produto, score };
-      })
-    );
-
-    const rankingOrdenado = ranking.sort((a, b) => b.score - a.score);
-    return {
-      ...resultadoTreino,
-      ranking: limite ? rankingOrdenado.slice(0, limite) : rankingOrdenado,
-      usuario,
-    };
+    return await recomendarProdutos({
+      usuarioAtivo: usuario,
+      comprasSimuladas,
+      produtos,
+      usuarios,
+      modeloTreinado: resultadoTreino,
+      limite,
+    });
   } finally {
     resultadoTreino.model.dispose();
   }
