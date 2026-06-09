@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# IA Chess Store — Recomendação com TensorFlow.js
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **IA Chess Store** é uma loja fictícia acadêmica criada exclusivamente para o exercício do **Módulo 01 da formação Engenharia de Software com IA Aplicada**.
 
-## Available Scripts
+> Segurança: este projeto não usa dados reais, loja real, Firebase real, gateway de pagamento real, URLs produtivas, `.env`, tokens, chaves ou credenciais. Todos os produtos, usuários e históricos de compra são fictícios.
 
-In the project directory, you can run:
+## Objetivo do exercício
 
-### `npm start`
+Demonstrar uma aplicação React que treina, no navegador, uma rede neural simples de recomendação de produtos usando `@tensorflow/tfjs`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+A experiência principal contém apenas:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Início** — vitrine fictícia com top 3 produtos recomendados pela IA e simulador rápido de usuário.
+- **Recomendador IA** — página didática com controles interativos, features, treinamento, métricas e ranking completo.
+- **Sobre o Exercício** — explicação acadêmica do módulo, dos dados mockados e da diferença entre regra manual e aprendizado por comportamento.
 
-### `npm test`
+## Tecnologias usadas
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- React e Create React App.
+- React Router.
+- React Bootstrap.
+- TensorFlow.js (`@tensorflow/tfjs`).
+- Dados mockados em arquivos locais.
 
-### `npm run build`
+## Interação em tempo real
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+A Home e a página `/recomendador-ia` permitem trocar o usuário mockado, criar um visitante sem compras, editar idade, categoria preferida, cor preferida e preço preferido, além de marcar/desmarcar compras simuladas. Ao clicar em **Recalcular recomendações**, a aplicação treina/recalcula no navegador e exibe o ranking atualizado, incluindo um aviso quando a ordem muda.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Como a rede neural recomenda
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+O ranking não usa uma fórmula manual de afinidade. Ele é gerado por comportamento mockado de compra:
 
-### `npm run eject`
+1. `src/data/produtosMock.js` define produtos fictícios de xadrez com `id`, `nome`, `descricao`, `categoria`, `cor`, `preco`, `idadeIndicada` e `destaque` opcional.
+2. `src/data/usuariosMock.js` define usuários fictícios com `id`, `nome`, `idade` e histórico `purchases`/`compras` referenciando produtos existentes.
+3. `src/ia/recomendadorIA.js` cria o contexto com:
+   - `minAge` e `maxAge`;
+   - `minPrice` e `maxPrice`;
+   - categorias e cores;
+   - índices de categoria/cor;
+   - média de idade dos compradores por produto.
+4. Produtos são codificados com preço normalizado ponderado, idade média normalizada e one-hot encoding ponderado para categoria e cor.
+5. Usuários são codificados pela média dos vetores dos produtos comprados; usuários sem compras usam idade normalizada e zeros nos demais campos.
+6. O treino combina pares `[userVector + productVector]`.
+7. O label é `1` quando o usuário comprou o produto e `0` quando não comprou.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Arquitetura usada:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Dense 128 `relu`;
+- Dense 64 `relu`;
+- Dense 32 `relu`;
+- Dense 1 `sigmoid`;
+- `adam(0.01)`;
+- `binaryCrossentropy`;
+- métrica `accuracy`;
+- 100 épocas;
+- batch size 32.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Estrutura enxuta pós-limpeza
 
-## Learn More
+A aplicação foi reduzida para os arquivos necessários ao exercício: componentes de navegação/rodapé, páginas acadêmicas, dados mockados, serviço de IA e CSS dessas telas. Fluxos antigos de autenticação, carrinho, checkout, administração, influenciador, integrações externas e arquivos de Firebase foram removidos da experiência e do código fonte.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Como rodar
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm install
+npm start
+```
 
-### Code Splitting
+Acesse:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```txt
+http://localhost:3000
+http://localhost:3000/recomendador-ia
+```
 
-### Analyzing the Bundle Size
+## Testes e build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+npm test -- --watchAll=false
+npm run build
+```
 
-### Making a Progressive Web App
+## Estrutura principal
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```txt
+src/data/produtosMock.js          # produtos fictícios de xadrez
+src/data/usuariosMock.js          # usuários fictícios e compras mockadas
+src/ia/recomendadorIA.js            # treinamento e ranking com TensorFlow.js
+src/pages/Home.js                 # vitrine fictícia com top 3 e simulador rápido
+src/pages/RecomendadorIA.js       # controles interativos, explicação e ranking completo
+src/pages/Sobre.js                # contexto acadêmico do exercício
+```
 
-### Advanced Configuration
+## Prints sugeridos
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Para documentação do exercício, capture:
 
-### Deployment
+1. Home com o hero “Loja fictícia com recomendação por Inteligência Artificial”.
+2. Top 3 produtos recomendados na Home após alterar o simulador.
+3. Página `/recomendador-ia` exibindo controles, compras simuladas, loss, accuracy e ranking.
+4. Página “Sobre o Exercício” com o aviso de dados fictícios.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Aviso de segurança
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Não adicionar `.env`, `.env.local`, `.env.production` ou credenciais.
+- Não adicionar chaves reais de Firebase, gateways de pagamento ou APIs externas.
+- Não usar dados reais de clientes, lojas, telefones, e-mails, pedidos ou endereços.
+- Manter integrações produtivas desativadas ou substituídas por dados fictícios.

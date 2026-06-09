@@ -1,30 +1,68 @@
 // src/pages/Sobre.js
 import React from 'react';
-import { Container, Row, Col, Image } from 'react-bootstrap';
-import logoPreta from '../assets/1logo-xadrezjl.png'; // nova logo preta
+import { Alert, Badge, Card, Col, Container, Row } from 'react-bootstrap';
 
 export default function Sobre() {
   return (
-    <Container className="my-5">
-      <Row className="align-items-center">
-        <Col md={6} className="mb-4 mb-md-0 text-center">
-          <Image src={logoPreta} alt="Logo Xadrez JL" fluid style={{ maxWidth: '280px' }} />
+    <Container className="py-5">
+      <div className="recomendador-ia__hero mb-4">
+        <Badge bg="info" text="dark" className="mb-3">Sobre o exercício</Badge>
+        <h1>IA Chess Store: loja fictícia acadêmica</h1>
+        <p>
+          Este projeto foi refatorado exclusivamente para responder ao exercício do Módulo 01 da
+          formação Engenharia de Software com IA Aplicada.
+        </p>
+      </div>
+
+      <Alert variant="warning">
+        Todos os dados são fictícios. Não há loja real, Firebase real, gateway de pagamento real,
+        URLs produtivas, tokens, chaves ou dados privados neste fluxo acadêmico.
+      </Alert>
+
+      <Row className="g-4">
+        <Col md={6}>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Objetivo acadêmico</Card.Title>
+              <p>
+                Demonstrar como uma aplicação React pode treinar uma rede neural no navegador com
+                TensorFlow.js e gerar recomendações de produtos a partir de histórico mockado de compras.
+              </p>
+            </Card.Body>
+          </Card>
         </Col>
         <Col md={6}>
-          <h2 className="mb-4 text-center text-md-start">🧠 Sobre a Xadrez JL</h2>
-          <p>
-            A <strong>Xadrez JL</strong> nasceu da paixão pelo jogo de xadrez e o desejo de tornar
-            o esporte mais acessível para todos. Nosso objetivo é oferecer produtos de qualidade, 
-            conteúdos didáticos e um atendimento próximo e eficiente.
-          </p>
-          <p>
-            Combinamos tradição e tecnologia para entregar não apenas materiais, mas uma verdadeira
-            experiência de aprendizado e evolução no mundo do xadrez.
-          </p>
-          <p>
-            Seja você iniciante ou jogador experiente, aqui é o seu lugar. Obrigado por fazer parte 
-            da nossa comunidade!
-          </p>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Regra manual vs aprendizado</Card.Title>
+              <p>
+                Em vez de usar uma fórmula fixa de afinidade, o modelo aprende por comportamento:
+                pares usuário-produto recebem label 1 quando houve compra fictícia e 0 quando não houve.
+              </p>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={6}>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Features</Card.Title>
+              <p>
+                A recomendação usa preço normalizado, média de idade dos compradores, categoria e cor
+                com one-hot encoding para representar produtos e usuários.
+              </p>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={6}>
+          <Card className="h-100 shadow-sm">
+            <Card.Body>
+              <Card.Title>Execução local</Card.Title>
+              <p>
+                O treinamento acontece localmente no navegador. Nenhuma API produtiva é chamada para
+                gerar o ranking da IA Chess Store.
+              </p>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>
