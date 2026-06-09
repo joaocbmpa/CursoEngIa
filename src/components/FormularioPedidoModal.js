@@ -27,7 +27,7 @@ export default function FormularioPedidoModal({ show, onHide, itensCarrinho }) {
         total,
         criadoEm: Timestamp.now()
       });
-      window.location.href = 'https://www.mercadopago.com.br/checkout'; // Substituir pelo seu link
+      window.alert('Checkout fictício para o exercício acadêmico. Nenhum pagamento real será iniciado.');
     } catch (error) {
       console.error('Erro ao enviar pedido:', error);
       alert('Erro ao enviar pedido. Tente novamente.');

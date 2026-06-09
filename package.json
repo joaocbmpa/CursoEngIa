@@ -1,8 +1,9 @@
 {
-  "name": "xadrezjl",
+  "name": "curso-eng-ia-academico",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -11,7 +12,6 @@
     "bootstrap": "^5.3.5",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
-    "mercadopago": "^2.4.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.0",
