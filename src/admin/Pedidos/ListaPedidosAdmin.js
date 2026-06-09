@@ -221,7 +221,7 @@ export default function ListaPedidosAdmin() {
   const reenviarEmail = async (pedidoId) => {
     try {
       await axios.post(
-        "https://us-central1-xadrezjl-828b4.cloudfunctions.net/reenviarEmailConfirmacao",
+        "https://example.invalid/mock/reenviarEmailConfirmacao",
         { id: pedidoId }
       );
       alert("✅ E-mail reenviado com sucesso!");

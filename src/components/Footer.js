@@ -2,8 +2,8 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo-xadrezjl.png';
-import { FaFacebook, FaInstagram } from 'react-icons/fa';
+import logo from '../logo.svg';
+
 
 export default function Footer() {
   return (
@@ -12,9 +12,9 @@ export default function Footer() {
         <Row className="mb-4">
           {/* Coluna 1: Logo e descrição */}
           <Col md={4}>
-            <img src={logo} alt="Logo Xadrez JL" width={50} className="mb-2" />
+            <img src={logo} alt="Logo acadêmico" width={50} className="mb-2" />
             <p className="mt-2">
-              Xadrez JL é sua loja especializada em produtos de xadrez!
+              Loja Acadêmica IA é uma vitrine fictícia para exercícios de recomendação com IA.
             </p>
           </Col>
 
@@ -41,21 +41,13 @@ export default function Footer() {
           {/* Coluna 3: Contato e redes sociais */}
           <Col md={4}>
             <h5>Contato</h5>
-            <p className="mb-1">WhatsApp: (91) 98326-1572</p>
-            <p className="mb-2">E-mail: joaoluizcbmpa@gmail.com</p>
-            <div className="d-flex gap-3">
-              <a href="https://instagram.com/joaoluizcbmpa" target="_blank" rel="noopener noreferrer" className="text-white fs-4">
-                <FaInstagram />
-              </a>
-              <a href="https://www.facebook.com/profile.php?id=100012181931880" target="_blank" rel="noopener noreferrer" className="text-white fs-4">
-                <FaFacebook />
-              </a>
-            </div>
+            <p className="mb-1">Contato fictício: contato@exemplo-academico.test</p>
+            <p className="mb-2">Sem vendas, pagamentos ou atendimento reais.</p>
           </Col>
         </Row>
 
         <hr className="border-secondary" />
-        <p className="text-center mb-0">© {new Date().getFullYear()} Xadrez JL. Todos os direitos reservados.</p>
+        <p className="text-center mb-0">© {new Date().getFullYear()} Loja Acadêmica IA. Projeto acadêmico com dados fictícios.</p>
       </Container>
     </footer>
   );

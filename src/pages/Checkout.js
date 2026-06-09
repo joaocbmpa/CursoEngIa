@@ -128,7 +128,7 @@ const Checkout = () => {
     const faltando = [];
     if (!formData.nome.trim()) faltando.push("Nome");
     if (!formData.email.trim() || !isEmail(formData.email)) faltando.push("E-mail válido");
-    if (!isPhone(formData.telefone)) faltando.push("Telefone/WhatsApp");
+    if (!isPhone(formData.telefone)) faltando.push("Telefone");
     if (!isCEP(formData.cep)) faltando.push("CEP");
     if (!formData.rua.trim()) faltando.push("Rua");
     if (!formData.numero.trim()) faltando.push("Número");
@@ -196,7 +196,7 @@ const Checkout = () => {
       };
 
       const FN_URL =
-        "https://us-central1-xadrezjl-828b4.cloudfunctions.net/criarPreferencia";
+        "https://example.invalid/mock/criarPreferencia";
 
       const { data } = await axios.post(FN_URL, pedido);
 
@@ -258,7 +258,7 @@ const Checkout = () => {
 
       <div className="row mt-3">
         <div className="col-md-6">
-          <label className="form-label">Telefone / WhatsApp *</label>
+          <label className="form-label">Telefone *</label>
           <input
             type="text"
             className="form-control"

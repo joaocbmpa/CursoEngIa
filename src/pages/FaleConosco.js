@@ -10,8 +10,8 @@ export default function FaleConosco() {
       <Row className="mb-4">
         <Col md={6}>
           <h5>Informações de Contato</h5>
-          <p>📱 WhatsApp: (91) 98326-1572</p>
-          <p>📧 E-mail: joaoluizcbmpa@gmail.com</p>
+          <p>📱 Canal fictício: não há atendimento real</p>
+          <p>📧 E-mail fictício: contato@exemplo-academico.test</p>
         </Col>
 
         <Col md={6}>
