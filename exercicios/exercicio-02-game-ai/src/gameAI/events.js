@@ -1,0 +1,4 @@
+export const GAME_AI_EVENTS = {
+  OBSERVE: 'GAME_AI_OBSERVE',
+  DECISION: 'GAME_AI_DECISION',
+};
