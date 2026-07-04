@@ -1,6 +1,6 @@
 # Exercício 01 — IA Chess Store / Recomendador IA
 
-Aplicação React acadêmica que simula uma loja fictícia de xadrez e recomenda produtos com uma rede neural treinada no navegador usando **TensorFlow.js**.
+Aplicação React acadêmica que simula uma loja fictícia de xadrez e recomenda produtos com uma rede neural treinada no navegador usando o pacote oficial **@tensorflow/tfjs**.
 
 ## Conceitos praticados
 
@@ -22,5 +22,7 @@ npm run build
 ```
 
 ## Observações
+
+A dependência de IA é o pacote oficial `@tensorflow/tfjs` declarado no `package.json`; não há vendor local ou shim acadêmico.
 
 Todos os dados são fictícios. Não há Firebase real, Mercado Pago, checkout produtivo, credenciais, tokens ou `.env`.
