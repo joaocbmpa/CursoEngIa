@@ -1,7 +1,0 @@
-{
-  "name": "@tensorflow/tfjs",
-  "version": "0.0.0-academico",
-  "description": "Adaptador local didático para permitir o exercício acadêmico sem baixar dependências externas.",
-  "main": "index.js",
-  "license": "MIT"
-}

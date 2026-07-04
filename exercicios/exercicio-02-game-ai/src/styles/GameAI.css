@@ -1,0 +1,23 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #08111f; color: #edf6ff; }
+.game-ai-page { min-height: 100vh; padding: 32px; }
+.game-ai-hero { max-width: 980px; margin: 0 auto 24px; padding: 28px; border-radius: 24px; background: linear-gradient(135deg, #172554, #0f766e); box-shadow: 0 24px 70px rgba(0,0,0,.35); }
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; color: #93c5fd; font-weight: 800; }
+.game-ai-hero h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 4rem); }
+.game-ai-layout { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; }
+.arena-card, .panel { border: 1px solid rgba(148,163,184,.25); border-radius: 24px; background: rgba(15,23,42,.82); box-shadow: 0 18px 60px rgba(0,0,0,.3); }
+.arena-card { padding: 18px; }
+.arena { position: relative; width: 100%; aspect-ratio: 720 / 420; overflow: hidden; cursor: crosshair; border-radius: 18px; background: radial-gradient(circle at 30% 25%, rgba(59,130,246,.32), transparent 28%), linear-gradient(135deg, #0f172a, #111827); border: 1px solid rgba(125,211,252,.25); }
+.target, .aim { position: absolute; transform: translate(-50%, -50%); pointer-events: none; }
+.target { width: 48px; height: 48px; border-radius: 999px; background: #fb7185; box-shadow: 0 0 0 10px rgba(251,113,133,.18), 0 0 30px rgba(251,113,133,.85); }
+.aim { width: 54px; height: 54px; border: 3px solid #22d3ee; border-radius: 999px; box-shadow: 0 0 24px rgba(34,211,238,.75); }
+.aim::before, .aim::after { content: ''; position: absolute; background: #22d3ee; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.aim::before { width: 72px; height: 2px; } .aim::after { width: 2px; height: 72px; }
+.panel { padding: 22px; }
+.controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+button, select { border: 0; border-radius: 12px; padding: 11px 12px; font-weight: 800; }
+button { background: #38bdf8; color: #082f49; cursor: pointer; }
+select { width: 100%; margin: 8px 0 18px; background: #e0f2fe; }
+.stats, .decision { margin: 10px 0; padding: 12px; border-radius: 14px; background: rgba(15,118,110,.22); }
+.panel h2 { font-size: 1.1rem; }
+@media (max-width: 900px) { .game-ai-layout { grid-template-columns: 1fr; } .game-ai-page { padding: 16px; } }
